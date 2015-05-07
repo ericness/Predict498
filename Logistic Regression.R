@@ -8,11 +8,10 @@ setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 
 car.data <- read.csv(file="CarLemons_Final_05032015_Training_ECN.csv", header=TRUE)
 car.data.tbl <- tbl_df(car.data)
 
-# car.data.tbl %<>% select(IsBadBuy, VehicleAge, VehBCost, StandardMake, StandardModel,
-#                          MMRAcquisitionRetailAveragePrice, 
-#                          State, Division, CityType, model_body_style, VehOdo,
-#                          PurchDayofWeek  )
-car.data.tbl %<>% select(IsBadBuy, StandardMake )
+car.data.tbl %<>% select(IsBadBuy, VehicleAge, VehBCost, StandardMake, StandardModel,
+                         MMRAcquisitionRetailAveragePrice, 
+                         State, Division, CityType, model_body_style, VehOdo,
+                         PurchDayofWeek  )
 
 car.data.tbl.dummies <- select(car.data.tbl,IsBadBuy, StandardMake, StandardModel, PurchDayofWeek, State)
 
@@ -20,11 +19,8 @@ dummies <- dummyVars(IsBadBuy ~ ., data = car.data.tbl.dummies)
 car.data.tbl.dummies <- as.data.frame((predict(dummies, newdata = car.data.tbl.dummies)))
 
 car.data.tbl.dummies %<>%
-    select(StandardMake.BUICK,StandardMake.CHEVROLET,StandardMake.GMC,StandardMake.HONDA,
-           StandardMake.ISUZU,StandardMake.MITSUBISHI,StandardMake.SATURN,StandardMake.SCION,StandardMake.TOYOTA,
-           
-           StandardMake.CHRYSLER, StandardMake.DODGE, StandardMake.FORD, StandardMake.HYUNDAI,
-           StandardMake.OLDSMOBILE, StandardMake.PONTIAC,         
+    select(StandardMake.CHEVROLET,StandardMake.DODGE,StandardMake.HONDA,
+           StandardMake.ISUZU,StandardMake.SCION,StandardMake.TOYOTA,        
            
            StandardModel.EXPLORER, StandardModel.STRATUS,StandardModel.MAXIMA,
 
@@ -37,6 +33,7 @@ car.data.tbl.dummies %<>%
            StandardModel.MONTANA, StandardModel.MONTERO, StandardModel.MOUNTAINEER, StandardModel.MUSTANG, StandardModel.NEON,
            StandardModel.PROTEGE, StandardModel.SABLE, StandardModel.SORENTO, StandardModel.TRACKER, StandardModel.VOYAGER,
            StandardModel.XTERRA,
+           StandardModel.MONTANA, StandardModel.MONTERO, StandardModel.MOUNTAINEER,StandardModel.PROTEGE,
            
            # 2 star variables
            #StandardModel.4RUNNER, StandardModel.BONNEVILLE, StandardModel.BRAVADA, StandardModel.CHEROKEE, StandardModel.FORENZA,
@@ -45,7 +42,7 @@ car.data.tbl.dummies %<>%
            #StandardModel.PATHFINDER, StandardModel.RENDEZVOUS, `StandardModel.S SERIES`, StandardModel.SENTRA, StandardModel.SUNFIRE,
            #StandardModel.TAURUS, StandardModel.TIBURON, StandardModel.VENTURE, `StandardModel.XL-7`,
            
-           PurchDayofWeek.Monday,PurchDayofWeek.Tuesday,State.FL)
+           PurchDayofWeek.Monday,PurchDayofWeek.Tuesday,State.TX)
 
 car.data.tbl %<>%
   bind_cols(car.data.tbl.dummies) %>%
@@ -69,11 +66,8 @@ dummies.test <- dummyVars(IsBadBuy ~ ., data = car.data.test.tbl.dummies)
 car.data.test.tbl.dummies <- as.data.frame((predict(dummies.test, newdata = car.data.test.tbl.dummies)))
 
 car.data.test.tbl.dummies %<>%
-  select(StandardMake.BUICK,StandardMake.CHEVROLET,StandardMake.GMC,StandardMake.HONDA,
-         StandardMake.ISUZU,StandardMake.MITSUBISHI,StandardMake.SATURN,StandardMake.SCION,StandardMake.TOYOTA,
-         
-         StandardMake.CHRYSLER, StandardMake.DODGE, StandardMake.FORD, StandardMake.HYUNDAI,
-         StandardMake.OLDSMOBILE, StandardMake.PONTIAC,         
+  select(StandardMake.CHEVROLET,StandardMake.DODGE,StandardMake.HONDA,
+         StandardMake.ISUZU,StandardMake.SCION,StandardMake.TOYOTA,  
          
          StandardModel.EXPLORER, StandardModel.STRATUS,StandardModel.MAXIMA,
          
@@ -85,7 +79,8 @@ car.data.test.tbl.dummies %<>%
          StandardModel.MONTANA, StandardModel.MONTERO, StandardModel.MOUNTAINEER, StandardModel.MUSTANG, StandardModel.NEON,
          StandardModel.PROTEGE, StandardModel.SABLE, StandardModel.SORENTO, StandardModel.TRACKER, StandardModel.VOYAGER,
          StandardModel.XTERRA,
-  
+         StandardModel.MONTANA, StandardModel.MONTERO, StandardModel.MOUNTAINEER,StandardModel.Protege,
+         
          # 2 star variables
          #StandardModel.4RUNNER, StandardModel.BONNEVILLE, StandardModel.BRAVADA, StandardModel.CHEROKEE, StandardModel.FORENZA,
          #StandardModel.FRONTIER, StandardModel.G35, StandardModel.G5, `StandardModel.GRAND VITARA`, StandardModel.GS,
@@ -93,7 +88,7 @@ car.data.test.tbl.dummies %<>%
          #StandardModel.PATHFINDER, StandardModel.RENDEZVOUS, `StandardModel.S SERIES`, StandardModel.SENTRA, StandardModel.SUNFIRE,
          #StandardModel.TAURUS, StandardModel.TIBURON, StandardModel.VENTURE, `StandardModel.XL-7`,
          
-         PurchDayofWeek.Monday,PurchDayofWeek.Tuesday,State.FL)
+         PurchDayofWeek.Monday,PurchDayofWeek.Tuesday,State.TX)
 
 car.data.test.tbl %<>%
   bind_cols(car.data.test.tbl.dummies) %>%
@@ -106,9 +101,9 @@ car.data.test.tbl %<>%
 
 car.data.test.tbl$IsBadBuyProb <- predict(logit.model, car.data.test.tbl, type="response")
 car.data.test.tbl$IsBadBuy <- 0
-car.data.test.tbl$IsBadBuy[car.data.test.tbl$IsBadBuyProb > 0.10] <- 1
+car.data.test.tbl$IsBadBuy[car.data.test.tbl$IsBadBuyProb > 0.40] <- 1
 
 setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Submissions")
 #setwd("C:/Users/eness/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Submissions")
-write.csv(car.data.test.tbl[c("RefId","IsBadBuy")], "LogisticModelCutover10Predictions_10.csv", row.names=FALSE)
+write.csv(car.data.test.tbl[c("RefId","IsBadBuy")], "LogisticModelCutover40Predictions_12.csv", row.names=FALSE)
 

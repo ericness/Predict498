@@ -5,17 +5,18 @@ library(glmnet)
 library(rpart)
 library(rpart.plot)
 
-#setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Final")
+setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Final")
 #setwd("C:/Users/eness/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Final")
 
-setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Training")
+#setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Training")
 #setwd("C:/Users/eness/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Training")
 
 #car.data <- read.csv(file="KaggleTrainingWithAddedCarDataAndDependent.csv", header=TRUE)
-#car.data <- read.csv(file="CarLemons_Final_04212015.csv", header=TRUE)
+#car.data <- read.csv(file="CarLemons_Final_05052015.csv", header=TRUE)
 
+car.data <- read.csv(file="CarLemons_Final_05052015_One_kick_Two_NonKick.csv", header=TRUE)
 
-car.data <- read.csv(file="CarLemons_Final_05032015_Training_ECN.csv", header=TRUE)
+#car.data <- read.csv(file="CarLemons_Final_05032015_Training_ECN.csv", header=TRUE)
 
 
 ####################
@@ -32,27 +33,41 @@ car.data.tbl <- tbl_df(car.data)
 #                          PurchMonth, Region, Size, StandardMake, StandardModel, State,
 #                          SubModel_Format, VehBCost, VehicleAge, VehOdo, WheelType, ZipCode)
 car.data.tbl %<>% select(IsBadBuy, CityType, Color, Division, FacilityCode, Hurricane_ind,
-                         IndianPopulationRatio, Make, MMRAcquisitionAuctionAveragePrice,
+                         IndianPopulationRatio, Make, 
                          mode_engine_valves_per_cyl, model_body_style, model_doors, model_engine_num_cyl,
                          model_engine_torque_rpm, model_engine_type,
                          model_seats, model_sold_in_us, Nationality, PurchDayofWeek,
                          PurchMonth, Region, Size, StandardMake, StandardModel, State,
-                         SubModel_Format, VehBCost, VehicleAge, VehOdo, WheelType, ZipCode)
+                         SubModel_Format, VehBCost, VehicleAge, VehOdo, ZipCode,
+                         
+                         MMRAcquisitionAuctionAveragePrice, MMRAcquisitionAuctionAveragePrice_ind, Log_MMRAcquisitionAuctionAveragePrice,
+                         MMRAcquisitionRetailAveragePrice, MMRAcquisitionRetailAveragePrice_ind, Log_MMRAcquisitionRetailAveragePrice,
+                         VehBCost_ind, Log_VehBCost, VehOdo_ind, Log_VehOdo,
+                         Recall_Ct_Ind, Elevation_ind,
+                         Inter_Odo_Age, Inter_Odo_Age_Ind, Log_Inter_Odo_Age)
 
-
+  
 # forward variable selection
 regfit.fwd <- regsubsets(IsBadBuy ~ ., data=car.data.tbl, nvmax=15, method="forward")
 
-sink("../../Predict498_Repo/regit_fwd_20150505.txt")
+sink("../../Models/Variable Selection/regit_fwd_20150506.txt")
 summary(regfit.fwd)
 sink()
 
 # backward variable selection
 regfit.back <- regsubsets(IsBadBuy ~ ., data=car.data.tbl, nvmax=15, method="backward")
 
-sink("../../Predict498_Repo/regit_back.txt")
+sink("../../Models/Variable Selection/regit_back_20150506.txt")
 summary(regfit.back)
 sink()
+
+# stepwise variable selection
+regfit.step <- regsubsets(IsBadBuy ~ ., data=car.data.tbl, nvmax=15, method="seqrep")
+
+sink("../../Models/Variable Selection/regit_step_20150506.txt")
+summary(regfit.step)
+sink()
+
 
 # LASSO
 grid = 10^seq(10,-2,length=100)
