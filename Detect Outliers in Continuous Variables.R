@@ -4,7 +4,7 @@ library(dplyr)
 setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Final")
 #setwd("C:/Users/eness/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Final")
 
-car.data <- read.csv(file="CarLemons_Final_04212015.csv", header=TRUE)
+car.data <- read.csv(file="CarLemons_Final_05052015.csv", header=TRUE)
 car.data.tbl <- tbl_df(car.data)
 
 summary(car.data$VehOdo)
@@ -18,7 +18,8 @@ summary(car.data$MMRAcquisitionAuctionCleanPrice)
 ggplot(car.data, aes(x=MMRAcquisitionAuctionCleanPrice)) + geom_histogram()
 
 summary(car.data$MMRAcquisitionRetailAveragePrice)
-ggplot(car.data, aes(x=MMRAcquisitionRetailAveragePrice)) + geom_histogram()
+ggplot(car.data, aes(x=MMRAcquisitionRetailAveragePrice)) + geom_histogram(fill="blue",binwidth=500) +
+  ggtitle("Histogram of MMRAcquisitionRetailAveragePrice")
 
 summary(car.data$MMRAcquisitonRetailCleanPrice)
 ggplot(car.data, aes(x=MMRAcquisitonRetailCleanPrice)) + geom_histogram()
