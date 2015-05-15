@@ -10,72 +10,81 @@ setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 
 car.data <- read.csv(file="CarLemons_Final_05032015_Training_ECN_01.csv", header=TRUE)
 car.data.tbl <- tbl_df(car.data)
 
-car.data.tbl %<>% select(IsBadBuy, VehicleAge, Log_VehBCost, StandardMake, StandardModel,
+car.data.tbl %<>% select(IsBadBuy, Log_VehBCost, StandardMake, StandardModel,
                          MMRAcquisitionRetailAveragePrice, 
-                         State, CityType, VehOdo,
-                         PurchDayofWeek, Inter_Odo_Age, Hurricane_ind, model_body_style,
-                         SubModel_Format, Size, model_engine_torque_rpm, Division,
-                         mode_engine_valves_per_cyl, model_engine_type)
+                         State,  VehOdo,
+                         PurchDayofWeek, Inter_Odo_Age, model_body_style,
+                         SubModel_Format, Size) %>%
+                mutate(StandardModel = gsub("\\s|-|\\&","_",StandardModel,perl=TRUE))
 
 car.data.tbl.dummies <- select(car.data.tbl,IsBadBuy, StandardMake, StandardModel, PurchDayofWeek, State,
-                               model_body_style, SubModel_Format, Size, Division, model_engine_type)
+                               model_body_style, SubModel_Format, Size)
 
 dummies <- dummyVars(IsBadBuy ~ ., data = car.data.tbl.dummies)
 car.data.tbl.dummies <- as.data.frame((predict(dummies, newdata = car.data.tbl.dummies)))
 
 car.data.tbl.dummies %<>%
-  select(StandardMake.CHEVROLET, StandardMake.SATURN, StandardMake.SUZUKI,
-           
-           #StandardMake.DODGE,StandardMake.HONDA,
-           #StandardMake.ISUZU,StandardMake.SCION,StandardMake.TOYOTA,        
-           
-           StandardModel.EXPLORER, StandardModel.STRATUS,StandardModel.MAXIMA,
-
-           `StandardModel.PT CRUISER`,StandardModel.GS, StandardModel.WINDSTAR ,
-           StandardModel.MALIBU, StandardModel.TAURUS, StandardModel.DURANGO,
-           
-           # 3 star variables
-           StandardModel.ALERO, StandardModel.AVENGER, StandardModel.AVEO, StandardModel.AVIATOR,StandardModel.CAVALIER,
-           StandardModel.CENTURY, StandardModel.COOPER, StandardModel.ESCORT, StandardModel.EXPEDITION, StandardModel.FOCUS,
-           `StandardModel.GRAND AM`, `StandardModel.GRAND CHEROKEE`, `StandardModel.GRAND MARQUIS`, `StandardModel.L SERIES`,
-           StandardModel.MONTANA, StandardModel.MONTERO, StandardModel.MOUNTAINEER, StandardModel.MUSTANG, StandardModel.NEON,
-           StandardModel.PROTEGE, StandardModel.SABLE, StandardModel.SORENTO, StandardModel.TRACKER, StandardModel.VOYAGER,
-           StandardModel.XTERRA,
-           StandardModel.MONTANA, StandardModel.MONTERO, StandardModel.MOUNTAINEER,StandardModel.PROTEGE,
-           
-           # 2 star variables
-           #StandardModel.4RUNNER, StandardModel.BONNEVILLE, StandardModel.BRAVADA, StandardModel.CHEROKEE, StandardModel.FORENZA,
-           #StandardModel.FRONTIER, StandardModel.G35, StandardModel.G5, `StandardModel.GRAND VITARA`, StandardModel.GS,
-           #StandardModel.INTREPID, StandardModel.LESABRE, StandardModel.LS, StandardModel.M, StandardModel.MAZDA6, StandardModel.MONTEREY,
-           #StandardModel.PATHFINDER, StandardModel.RENDEZVOUS, `StandardModel.S SERIES`, StandardModel.SENTRA, StandardModel.SUNFIRE,
-           #StandardModel.TAURUS, StandardModel.TIBURON, StandardModel.VENTURE, `StandardModel.XL-7`,
-           
-           PurchDayofWeek.Monday,PurchDayofWeek.Tuesday,State.FL,State.TX,State.VA,
+  select(StandardMake.CHEVROLET, StandardMake.SATURN, # StandardMake.SUZUKI,
          
-           model_body_style.Sedan, model_body_style.Hatchback,
-           SubModel_Format.REGCAB, SubModel_Format.WAGON,
-           Size.VAN, `model_engine_type.in-line`,
-            `Division.West South Central`)
+         #StandardMake.DODGE,StandardMake.HONDA,
+         #StandardMake.ISUZU,StandardMake.SCION,StandardMake.TOYOTA,        
+         
+         StandardModel.EXPLORER, StandardModel.STRATUS,StandardModel.MAXIMA,
+         
+         `StandardModel.PT CRUISER`,StandardModel.GS, 
+         StandardModel.TAURUS, StandardModel.DURANGO,
+         
+         # StandardModel.WINDSTAR , StandardModel.MALIBU, 
+         
+         # 3 star variables
+         #StandardModel.ALERO, StandardModel.AVENGER, StandardModel.AVEO, StandardModel.AVIATOR,StandardModel.CAVALIER,
+         #StandardModel.CENTURY, StandardModel.COOPER, StandardModel.ESCORT, StandardModel.EXPEDITION, StandardModel.FOCUS,
+         #`StandardModel.GRAND AM`, `StandardModel.GRAND CHEROKEE`, `StandardModel.GRAND MARQUIS`, `StandardModel.L SERIES`,
+         #StandardModel.MONTANA, StandardModel.MONTERO, StandardModel.MOUNTAINEER, StandardModel.MUSTANG, StandardModel.NEON,
+         #StandardModel.PROTEGE, StandardModel.SABLE, StandardModel.SORENTO, StandardModel.TRACKER, StandardModel.VOYAGER,
+         #StandardModel.XTERRA,
+         #StandardModel.MONTANA, StandardModel.MONTERO, StandardModel.MOUNTAINEER,StandardModel.PROTEGE,
+         
+         # 2 star variables
+         #StandardModel.4RUNNER, StandardModel.BONNEVILLE, StandardModel.BRAVADA, StandardModel.CHEROKEE, StandardModel.FORENZA,
+         #StandardModel.FRONTIER, StandardModel.G35, StandardModel.G5, `StandardModel.GRAND VITARA`, StandardModel.GS,
+         #StandardModel.INTREPID, StandardModel.LESABRE, StandardModel.LS, StandardModel.M, StandardModel.MAZDA6, StandardModel.MONTEREY,
+         #StandardModel.PATHFINDER, StandardModel.RENDEZVOUS, `StandardModel.S SERIES`, StandardModel.SENTRA, StandardModel.SUNFIRE,
+         #StandardModel.TAURUS, StandardModel.TIBURON, StandardModel.VENTURE, `StandardModel.XL-7`,
+         
+         PurchDayofWeek.Monday,State.FL, State.VA,
+         
+         # PurchDayofWeek.Tuesday, State.TX, model_body_style.Hatchback, SubModel_Format.WAGON, `model_engine_type.in-line`, `Division.West South Central`
+         
+         model_body_style.Sedan, SubModel_Format.REGCAB, Size.VAN )
 
 car.data.tbl %<>%
   bind_cols(car.data.tbl.dummies) %>%
   select(-StandardMake,-StandardModel,-PurchDayofWeek, -State, 
-         -model_body_style, -SubModel_Format, -Size, -Division, -model_engine_type)
+         -model_body_style, -SubModel_Format, -Size)
 
-car.data.tbl %<>%
-  mutate(StandardModel.PTCRUISER = `StandardModel.PT CRUISER`,
-         StandardModel.GRANDAM = `StandardModel.GRAND AM`,
-         StandardModel.GRANDCHEROKEE = `StandardModel.GRAND CHEROKEE`,
-         StandardModel.GRANDMARQUIS = `StandardModel.GRAND MARQUIS`,
-         StandardModel.LSERIES = `StandardModel.L SERIES`) %>%
-  select(-`StandardModel.PT CRUISER`,-`StandardModel.GRAND AM`,-`StandardModel.GRAND CHEROKEE`,-`StandardModel.GRAND MARQUIS`, -`StandardModel.L SERIES`)
+# car.data.tbl %<>%
+#   mutate(StandardModel.PTCRUISER = `StandardModel.PT CRUISER`,
+#          StandardModel.GRANDAM = `StandardModel.GRAND AM`,
+#          StandardModel.GRANDCHEROKEE = `StandardModel.GRAND CHEROKEE`,
+#          StandardModel.GRANDMARQUIS = `StandardModel.GRAND MARQUIS`,
+#         StandardModel.CRV = `StandardModel.CR-V`,
+#         StandardModel.LSERIES = `StandardModel.L SERIES`) %>%
+#   select(-`StandardModel.PT CRUISER`,-`StandardModel.GRAND AM`,-`StandardModel.GRAND CHEROKEE`,-`StandardModel.GRAND MARQUIS`, -`StandardModel.CR-V`,-`StandardModel.L SERIES`)
 
 car.data.tbl %<>%
   mutate(IsBadBuy = as.factor(IsBadBuy))
 
 # Build logistic regression model
-rf.model <- randomForest(IsBadBuy~.,data=car.data.tbl,ntree=20, nodesize=5, mtry=9)
+#rf.model <- randomForest(IsBadBuy~.,data=car.data.tbl,ntree=100, nodesize=5, mtry=9)
 
+rf.model <- randomForest(IsBadBuy~.,data=car.data.tbl,ntree=100,  mtry=3)
+
+
+rf.model <- train(IsBadBuy~.,data=car.data.tbl,method="rf",
+                  trControl=trainControl(method="cv",number=5),
+                  allowParallel=TRUE)
+                  
 #setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Kaggle")
 #setwd("C:/Users/eness/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Kaggle")
 
