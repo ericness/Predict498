@@ -75,7 +75,7 @@ car.data.tbl %<>%
 car.data.tbl %<>%
   mutate(IsBadBuy = as.factor(IsBadBuy))
 
-# Build logistic regression model
+# Build random forest model
 #rf.model <- randomForest(IsBadBuy~.,data=car.data.tbl,ntree=100, nodesize=5, mtry=9)
 
 rf.model <- randomForest(IsBadBuy~.,data=car.data.tbl,ntree=100,  mtry=3)
@@ -84,7 +84,9 @@ rf.model <- randomForest(IsBadBuy~.,data=car.data.tbl,ntree=100,  mtry=3)
 rf.model <- train(IsBadBuy~.,data=car.data.tbl,method="rf",
                   trControl=trainControl(method="cv",number=5),
                   allowParallel=TRUE)
-                  
+
+
+
 #setwd("C:/Users/ericn_000/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Kaggle")
 #setwd("C:/Users/eness/Dropbox/Education/MS Predictive Analytics/PREDICT 498 Capstone/498 Capstone Project/Data/Kaggle")
 

@@ -24,17 +24,17 @@ car.data.tbl.dummies <- select(car.data.tbl,IsBadBuy, StandardMake, StandardMode
 dummies <- dummyVars(IsBadBuy ~ ., data = car.data.tbl.dummies)
 car.data.tbl.dummies <- as.data.frame((predict(dummies, newdata = car.data.tbl.dummies)))
 
-car.data.tbl.dummies %<>%
-  select(StandardMake.CHEVROLET, StandardMake.SATURN, 
-         
-         StandardModel.EXPLORER, StandardModel.STRATUS,StandardModel.MAXIMA,
-         
-         StandardModel.PT_CRUISER,StandardModel.GS, 
-         StandardModel.TAURUS, StandardModel.DURANGO,
-         
-         PurchDayofWeek.Monday,State.FL, State.VA,
-         
-         model_body_style.Sedan, SubModel_Format.REGCAB, Size.VAN )
+# car.data.tbl.dummies %<>%
+#   select(StandardMake.CHEVROLET, StandardMake.SATURN, 
+#          
+#          StandardModel.EXPLORER, StandardModel.STRATUS,StandardModel.MAXIMA,
+#          
+#          StandardModel.PT_CRUISER,StandardModel.GS, 
+#          StandardModel.TAURUS, StandardModel.DURANGO,
+#          
+#          PurchDayofWeek.Monday,State.FL, State.VA,
+#          
+#          model_body_style.Sedan, SubModel_Format.REGCAB, Size.VAN )
 
 car.data.tbl %<>%
   bind_cols(car.data.tbl.dummies) %>%
@@ -51,8 +51,8 @@ car.data.tbl %<>%
 
 # n.trees, interaction.depth, shrinkage
 
-gbmGrid <-  expand.grid(interaction.depth = c(1, 5, 9),
-                        n.trees = (1:20)*50,
+gbmGrid <-  expand.grid(interaction.depth = 5, #c(1, 5, 9),
+                        n.trees = (3:3)*50,
                         shrinkage = 0.1)
 
 gbm.model <- train(IsBadBuy~.,data=car.data.tbl,method="gbm",
